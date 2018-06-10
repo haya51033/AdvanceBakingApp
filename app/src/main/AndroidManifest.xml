@@ -20,30 +20,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.RecipeActivity" />
-        <activity
-            android:name=".Activity.StepActivity"
-            android:configChanges="orientation|screenSize|layoutDirection"
-            android:launchMode="singleTop" />
 
-        <receiver android:name=".Activity.StepActivity$MediaReceiver">
+
+        <receiver android:name=".Activity.StepFragment$MediaReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".Fragment.ItemListActivity"
-            android:label="@string/title_item_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
-            android:name=".Fragment.ItemDetailActivity"
-            android:label="@string/title_item_detail"
-            android:parentActivityName=".Fragment.ItemListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.android.advancebakingapp.Fragment.ItemListActivity" />
-        </activity>
+       <activity android:name=".Activity.StepContainerActivity"
+           android:configChanges="orientation|screenSize|layoutDirection"
+           android:launchMode="singleTop"/>
+
     </application>
 
 </manifest>

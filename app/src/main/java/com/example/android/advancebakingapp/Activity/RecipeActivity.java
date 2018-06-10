@@ -214,7 +214,8 @@ public class RecipeActivity extends AppCompatActivity
         stepIndex = stepArrayList.indexOf(step);
         step1 = new ArrayList<>();
         step1.add(step);
-        Intent intent = new Intent(getApplicationContext(), StepActivity.class);
+        Intent intent = new Intent(getApplicationContext(), StepContainerActivity.class);
+
         Bundle args = new Bundle();
         args.putSerializable("step_list",step1);
         args.putSerializable("stepsArrayList",stepArrayList);
