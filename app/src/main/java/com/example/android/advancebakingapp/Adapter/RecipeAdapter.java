@@ -55,29 +55,11 @@ public class RecipeAdapter extends
         TextView tv = viewHolder.mTextView;
         tv.setText(recipe.getName());
 
-        int mId= mRecipes.get(position).getId();
-        if (imageUrl != null && imageUrl.isEmpty())
+        if (imageUrl.equals("") && imageUrl.isEmpty())
         {
-            switch (mId)
-            {
-                //Nutella Pie
-                case 1:
-                    Picasso.with(context).load(R.drawable.nutella_pie).into(viewHolder.mImageView);
-                    break;
-                //Brownies
-                case 2:
-                    Picasso.with(context).load(R.drawable.brownies).into(viewHolder.mImageView);
-                    break;
-                //Yellow Cake
-                case 3:
-                    Picasso.with(context).load(R.drawable.yellow_cake).into(viewHolder.mImageView);
-                    break;
-                //Cheesecake
-                case 4:
-                    Picasso.with(context).load(R.drawable.cheesecake).into(viewHolder.mImageView);
-                    break;
-            }
-        } else
+            Picasso.with(context).load(R.drawable.baking_app_ico).into(viewHolder.mImageView);
+        }
+        else
         {
             Picasso.with(context).load(imageUrl).into(viewHolder.mImageView);
         }

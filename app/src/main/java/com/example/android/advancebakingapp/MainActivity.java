@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
@@ -26,7 +27,8 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     private ArrayList<Recipe> mRecipes;
     public RecyclerView rvRecipe;
-    public GridLayoutManager mGridLayoutManager;
+   // public GridLayoutManager mGridLayoutManager;
+    public LinearLayoutManager mLinearLayoutManager;
     public ArrayList<Recipe> arrayList;
     public RecipeAdapter recipeAdapter;
     private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
@@ -39,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelable(BUNDLE_RECYCLER_LAYOUT,
-                mGridLayoutManager.onSaveInstanceState());
-        lastFirstVisiblePosition = ((GridLayoutManager)rvRecipe.getLayoutManager())
+                mLinearLayoutManager.onSaveInstanceState());
+        lastFirstVisiblePosition = ((LinearLayoutManager)rvRecipe.getLayoutManager())
                 .findFirstCompletelyVisibleItemPosition();
         savedInstanceState.putInt("INT_VALUE",lastFirstVisiblePosition);
         super.onSaveInstanceState(savedInstanceState);
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         setContentView(R.layout.activity_main);
 
         rvRecipe = (RecyclerView) findViewById(R.id.recyclerView_recipes);
-        mGridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        mLinearLayoutManager = new LinearLayoutManager(getApplicationContext());
         ApiActivity rB = new ApiActivity();
         RecipeApi service =rB.retrofit.create(RecipeApi.class);
 
@@ -107,11 +109,11 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     private void configureRecyclerView(ArrayList mRecipes) {
         rvRecipe = (RecyclerView) findViewById(R.id.recyclerView_recipes);
         rvRecipe.setHasFixedSize(true);
-        rvRecipe.setLayoutManager( new GridLayoutManager(getApplicationContext(), 2));
+        rvRecipe.setLayoutManager( new LinearLayoutManager(getApplicationContext()));
         recipeAdapter = new RecipeAdapter(this);
         recipeAdapter.setRecipesData(mRecipes);
         rvRecipe.setAdapter(recipeAdapter);
-        ((GridLayoutManager)rvRecipe.getLayoutManager()).scrollToPosition(positionIndex);
+        ((LinearLayoutManager)rvRecipe.getLayoutManager()).scrollToPosition(positionIndex);
     }
 
 
