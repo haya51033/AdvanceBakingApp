@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">AdvanceBakingApp</string>
+    <string name="ingredient">Ingredient</string>
+    <string name="steps">Steps</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="restart">Restart</string>
+    <string name="guess">Baking App</string>
+    <string name="notification_text">Press to return to your recipe!</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+
+</resources>
