@@ -90,7 +90,6 @@ public class StepAdapter extends
     }
 
     public interface StepOnClickHandler {
-
         void onClickStep(Step step);
     }
 

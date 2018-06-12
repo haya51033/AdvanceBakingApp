@@ -2,16 +2,18 @@ package com.example.android.advancebakingapp.Activity;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,19 +25,14 @@ import com.example.android.advancebakingapp.R;
 
 import java.util.ArrayList;
 
-public class RecipeActivity extends AppCompatActivity
+public class RecipeActivity extends Fragment
         implements StepAdapter.StepOnClickHandler{
 
     public ArrayList<Ingredient> ingredients;
     public ArrayList<Step> steps;
     public ArrayList<Step> step1;
 
-    String videoURL = "";
-    String thumbnailURL = "";
-    String description = "";
-
     TextView tv_ingredients;
-    Button stepButton;
 
     LinearLayout mLinearLayout;
     LinearLayout mLinearLayoutHeader;
@@ -46,8 +43,8 @@ public class RecipeActivity extends AppCompatActivity
 
     RecyclerView stepsRecyclerView;
     StepAdapter stepAdapter ;
-    String collaps = "true";
-    String collaps1 = "true";
+    String collaps = "false";
+    String collaps1 = "false";
 
     private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_layout";
     private static final String STRING_VALUE = "string_value";
@@ -59,8 +56,10 @@ public class RecipeActivity extends AppCompatActivity
     public ArrayList<Step> stepArrayList =new ArrayList<>();
     int stepIndex=0;
 
+    View rootView;
+
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString(STRING_VALUE, collaps);
         savedInstanceState.putString(STRING_VALUE1, collaps1);
 
@@ -74,36 +73,65 @@ public class RecipeActivity extends AppCompatActivity
     }
 
 
+
+
+
+    public RecipeActivity(){}
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        rootView = inflater.inflate(R.layout.recipe_fragment, container, false);
+        //root
+        final FrameLayout frameLayout = (FrameLayout) rootView.findViewById(R.id.recipe_frame_root);
+
+
         if (savedInstanceState != null) {
-            super.onRestoreInstanceState(savedInstanceState);
-            stepsRecyclerView = (RecyclerView)findViewById(R.id.recipe_details_steps);
-            mLinearLayout = (LinearLayout) findViewById(R.id.expandedLayout);
-            mLinearLayoutHeader = (LinearLayout) findViewById(R.id.header);
-            mLinearLayout2 = (LinearLayout) findViewById(R.id.expandedLayout2);
-            mLinearLayoutHeader2 = (LinearLayout) findViewById(R.id.header2);
+            super.onActivityCreated(savedInstanceState);
+            stepsRecyclerView = (RecyclerView)rootView.findViewById(R.id.recipe_details_steps);
+            mLinearLayout = (LinearLayout) rootView.findViewById(R.id.expandedLayout);
+            mLinearLayoutHeader = (LinearLayout) rootView.findViewById(R.id.header);
+            mLinearLayout2 = (LinearLayout) rootView.findViewById(R.id.expandedLayout2);
+            mLinearLayoutHeader2 = (LinearLayout) rootView.findViewById(R.id.header2);
             collaps = savedInstanceState.getString(STRING_VALUE);
             collaps1 = savedInstanceState.getString(STRING_VALUE1);
             positionIndex = savedInstanceState.getInt("INT_VALUE");
-        }
-    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe);
-        stepsRecyclerView = (RecyclerView)findViewById(R.id.recipe_details_steps);
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayout = (LinearLayout) findViewById(R.id.expandedLayout);
-        mLinearLayoutHeader = (LinearLayout) findViewById(R.id.header);
-        mLinearLayout2 = (LinearLayout) findViewById(R.id.expandedLayout2);
-        mLinearLayoutHeader2 = (LinearLayout) findViewById(R.id.header2);
-        if(savedInstanceState != null)
+
+            /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // Trigger the callback method and pass in the position that was clicked
+                mCallback.onImageSelected(position);
+            }
+        });*/
+
+
+
+
+
+        }
+
+
+      //  setContentView(R.layout.activity_recipe);
+        stepsRecyclerView = (RecyclerView)rootView.findViewById(R.id.recipe_details_steps);
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mLinearLayout = (LinearLayout) rootView.findViewById(R.id.expandedLayout);
+        mLinearLayoutHeader = (LinearLayout) rootView.findViewById(R.id.header);
+        mLinearLayout2 = (LinearLayout) rootView.findViewById(R.id.expandedLayout2);
+        mLinearLayoutHeader2 = (LinearLayout) rootView.findViewById(R.id.header2);
+
+
+
+
+
+        /////////////
+
+
+         if(savedInstanceState != null)
         {
             if (collaps.equals("true"))
             {
-               collapse();
+                collapse();
             }
             else if (collaps.equals("false")){
                 expand();
@@ -116,19 +144,19 @@ public class RecipeActivity extends AppCompatActivity
             if (collaps1.equals("true"))
             {
 
-               // collapse1();
-                expand1();
-                expand();
-                Toast.makeText(getApplicationContext(),"truee",Toast.LENGTH_LONG).show();
+                 collapse1();
+
+                Toast.makeText(getActivity(),"truee",Toast.LENGTH_LONG).show();
 
             }
             else if (collaps1.equals("false")){
-                Toast.makeText(getApplicationContext(),"faalse",Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),"faalse",Toast.LENGTH_LONG).show();
                 expand1();
             }
             else
             {
-                collapse1();
+                //collapse1();
+                expand1();
             }
 
         }
@@ -136,16 +164,15 @@ public class RecipeActivity extends AppCompatActivity
         {
             collapse();
             collapse1();
-        }
+       }
 
-        //set visibility to GONE
         if(mLinearLayout != null) {
-            mLinearLayout.setVisibility(View.GONE);
+        mLinearLayout.setVisibility(View.GONE);
 
-        }
+    }
 
 
-        mLinearLayoutHeader.setOnClickListener(new View.OnClickListener() {
+         mLinearLayoutHeader.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -156,9 +183,6 @@ public class RecipeActivity extends AppCompatActivity
                 }
             }
         });
-
-        /////////////
-
         //set visibility to GONE
         if(mLinearLayout2 != null) {
             mLinearLayout2.setVisibility(View.GONE);
@@ -176,14 +200,14 @@ public class RecipeActivity extends AppCompatActivity
             }
         });
 
-        Intent intent = getIntent();
+        Intent intent = getActivity().getIntent();
         final Bundle args = intent.getBundleExtra("BUNDLE");
         if(args != null)
         {
             ingredients = (ArrayList<Ingredient>) args.getSerializable("ingredients_list");
             if (ingredients.size() != 0)
             {
-                tv_ingredients = (TextView) findViewById(R.id.recipe_details_ingredients);
+                tv_ingredients = (TextView) rootView.findViewById(R.id.recipe_details_ingredients);
                 tv_ingredients.setText("");
                 for(Ingredient i:ingredients){
                     tv_ingredients.append("- "+i.getIngredient() +" ("+i.getQuantity()+" "+i.getMeasure()+")\n");
@@ -195,12 +219,18 @@ public class RecipeActivity extends AppCompatActivity
                 configureRecyclerView(steps);
             }
         }
+
+
+
+        return rootView;
     }
 
+
+
     private void configureRecyclerView(ArrayList steps) {
-        stepsRecyclerView = (RecyclerView) findViewById(R.id.recipe_details_steps);
+        stepsRecyclerView = (RecyclerView) rootView.findViewById(R.id.recipe_details_steps);
         stepsRecyclerView.setHasFixedSize(true);
-        stepsRecyclerView.setLayoutManager( new LinearLayoutManager(this));
+        stepsRecyclerView.setLayoutManager( new LinearLayoutManager(getActivity()));
         stepAdapter = new StepAdapter(this);
         stepAdapter.setStepsData(steps);
         stepsRecyclerView.setAdapter(stepAdapter);
@@ -210,21 +240,26 @@ public class RecipeActivity extends AppCompatActivity
 
     @Override
     public void onClickStep(Step step) {
+        getActivity().finish();
         stepArrayList.addAll(steps);
         stepIndex = stepArrayList.indexOf(step);
         step1 = new ArrayList<>();
         step1.add(step);
-        Intent intent = new Intent(getApplicationContext(), StepContainerActivity.class);
+
+       // Intent intent = new Intent(getActivity(), RecipeFragment.class);
+        Intent intent = new Intent(getActivity(), StepContainerActivity.class);
+
 
         Bundle args = new Bundle();
         args.putSerializable("step_list",step1);
-        args.putSerializable("stepsArrayList",stepArrayList);
+        args.putSerializable("steps_list",stepArrayList);
+        args.putSerializable("ingredients_list",ingredients);
         args.putInt("SELECTED_INDEX",stepIndex);
         intent.putExtra("BUNDLE", args);
         startActivity(intent);
     }
 
-    private void expand() {
+    public void expand() {
         //set Visible
         collaps="false";
         mLinearLayout.setVisibility(View.VISIBLE);
@@ -237,7 +272,7 @@ public class RecipeActivity extends AppCompatActivity
         mAnimator.start();
     }
 
-     private void collapse() {
+     public void collapse() {
         collaps = "true";
         int finalHeight = mLinearLayout.getHeight();
         ValueAnimator mAnimator = slideAnimator(finalHeight, 0);
@@ -265,7 +300,7 @@ public class RecipeActivity extends AppCompatActivity
         mAnimator.start();
     }
 
-    private ValueAnimator slideAnimator(int start, int end) {
+    public ValueAnimator slideAnimator(int start, int end) {
 
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
 
@@ -283,7 +318,7 @@ public class RecipeActivity extends AppCompatActivity
     }
 
     ///////////////
-    private void expand1() {
+    public void expand1() {
         collaps1="false";
 
         //set Visible
@@ -297,7 +332,7 @@ public class RecipeActivity extends AppCompatActivity
         mAnimator.start();
     }
 
-    private void collapse1() {
+    public void collapse1() {
         collaps1="true";
         int finalHeight = mLinearLayout2.getHeight();
         ValueAnimator mAnimator = slideAnimator1(finalHeight, 0);
@@ -325,7 +360,7 @@ public class RecipeActivity extends AppCompatActivity
         mAnimator.start();
     }
 
-    private ValueAnimator slideAnimator1(int start, int end) {
+    public ValueAnimator slideAnimator1(int start, int end) {
 
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
 

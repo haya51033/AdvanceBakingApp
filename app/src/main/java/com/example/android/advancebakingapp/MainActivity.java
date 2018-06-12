@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.example.android.advancebakingapp.Activity.RecipeActivity;
+import com.example.android.advancebakingapp.Activity.RecipeFragment;
 import com.example.android.advancebakingapp.Adapter.RecipeAdapter;
 import com.example.android.advancebakingapp.Api.ApiActivity;
 import com.example.android.advancebakingapp.Api.RecipeApi;
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         steps.addAll(arr.get(0).getSteps());
 
 
-        Intent intent = new Intent(getApplicationContext(), RecipeActivity.class);
+        Intent intent = new Intent(getApplicationContext(), RecipeFragment.class);
         Bundle args = new Bundle();
         args.putSerializable("ingredients_list",ingredients);
         args.putSerializable("steps_list",steps);

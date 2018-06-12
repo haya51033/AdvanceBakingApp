@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.Model.Step;
 import com.example.android.advancebakingapp.R;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -34,6 +35,7 @@ public class StepDescriptionFragment extends Fragment {
     ImageView nextButton;
     ImageView previousButton;
     View rootView;
+    ArrayList<Ingredient> ingredients = new ArrayList<>();
 
     public StepDescriptionFragment(){
 
@@ -55,11 +57,16 @@ public class StepDescriptionFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         final Bundle args = intent.getBundleExtra("BUNDLE");
         if(args != null) {
-            stepsArrayList = (ArrayList<Step>) args.getSerializable("stepsArrayList");
+           // stepsArrayList = (ArrayList<Step>) args.getSerializable("stepsArrayList");
+            //steps_list
+            stepsArrayList = (ArrayList<Step>) args.getSerializable("steps_list");
+            ingredients = (ArrayList<Ingredient>) args.getSerializable("ingredients_list");
+
             saveSteps.addAll(stepsArrayList);
            stepIndex = args.getInt("SELECTED_INDEX", 0);
             if (saveSteps.size() != 0) {
                 step = saveSteps.get(stepIndex);
+               // step = saveSteps.get(0);
                 if(step.getDescription() != null) {
                     videoDescription = (TextView) rootView.findViewById(R.id.stepDescriptionTextView);
                     videoDescription.setText(step.getDescription());
@@ -92,20 +99,24 @@ public class StepDescriptionFragment extends Fragment {
 
 
     public void nextButton(){
+      //  Intent intent = new Intent(getActivity(), RecipeFragment.class);
         Intent intent = new Intent(getActivity(), StepContainerActivity.class);
         Bundle args = new Bundle();
-        args.putSerializable("stepsArrayList",stepsArrayList);
+        args.putSerializable("steps_list",stepsArrayList);
         args.putInt("SELECTED_INDEX",stepIndex + 1);
+        args.putSerializable("ingredients_list",ingredients);
         intent.putExtra("BUNDLE", args);
         getActivity().finish();
         startActivity(intent);
     }
 
     public void backButton(){
+       // Intent intent = new Intent(getActivity(), RecipeFragment.class);
         Intent intent = new Intent(getActivity(), StepContainerActivity.class);
         Bundle args = new Bundle();
-        args.putSerializable("stepsArrayList",stepsArrayList);
+        args.putSerializable("steps_list",stepsArrayList);
         args.putInt("SELECTED_INDEX",stepIndex - 1);
+        args.putSerializable("ingredients_list",ingredients);
         intent.putExtra("BUNDLE", args);
         getActivity().finish();
         startActivity(intent);

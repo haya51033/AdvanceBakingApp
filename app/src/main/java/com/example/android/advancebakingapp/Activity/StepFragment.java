@@ -1,11 +1,13 @@
 package com.example.android.advancebakingapp.Activity;
 
 
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.media.session.MediaSession;
 import android.net.Uri;
@@ -44,6 +46,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import android.support.v4.content.ContextCompat;
 
@@ -77,6 +80,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     ImageView nextButton;
     ImageView previousButton;
     View rootView;
+    Dialog mFullScreenDialog;
 
 
     @Override
@@ -95,6 +99,9 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
             position = savedInstanceState.getLong(SELECTED_POSITION);
+            if(isLandscape() && !isTablet(getContext())){
+                Toast.makeText(getActivity(),"lanscape   " , Toast.LENGTH_LONG).show();
+            }
         }
         rootView = inflater.inflate(R.layout.activity_step, container, false);
         //root
@@ -103,19 +110,50 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
         mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                 (getResources(), R.drawable.ic_launcher_background));
+
         startActivity();
         return rootView;
     }
 
+    private boolean isLandscape()
+    {
+        int orientation = getActivity().getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            return true;
+        return false;
+    }
+    static boolean isTablet(Context context)
+    {
+        boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+        boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        return (xlarge || large);
+    }
+
+   /* private void initFullscreenDialog() {
+
+        mFullScreenDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
+            public void onBackPressed() {
+                if (isLandscape() && (!isTablet(getContext())))
+                    closeFullscreenDialog();
+                super.onBackPressed();
+            }
+        };
+    }
+*/
     public void startActivity(){
         Intent intent = getActivity().getIntent();
         final Bundle args = intent.getBundleExtra("BUNDLE");
         if(args != null) {
-            stepsArrayList = (ArrayList<Step>) args.getSerializable("stepsArrayList");
+           // stepsArrayList = (ArrayList<Step>) args.getSerializable("stepsArrayList");
+
+            stepsArrayList = (ArrayList<Step>) args.getSerializable("steps_list");
+
             saveSteps.addAll(stepsArrayList);
+
             stepIndex = args.getInt("SELECTED_INDEX", 0);
             if (saveSteps.size() != 0) {
                 step = saveSteps.get(stepIndex);
+             //   step = saveSteps.get(0);
 
                 if(!step.getVideoURL().equals("") || !step.getThumbnailURL().equals("")){
                     initializeMediaSession();
@@ -127,12 +165,28 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
                     if(!step.getVideoURL().equals("") && !step.getThumbnailURL().equals(""))
                         mMediaUri = Uri.parse(step.getVideoURL());
 
+                    if(isLandscape() && !isTablet(getContext())){
+                        Toast.makeText(getActivity(),"lanscape   " , Toast.LENGTH_LONG).show();
+
+                        ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
+                        mFullScreenDialog.addContentView(mPlayerView,
+                                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT));
+                      //  mFullScreenIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.baking_app_ico));
+                      //  mExoPlayerFullscreen = true;
+                        mFullScreenDialog.show();
+
+
+                    }
                     initializePlayer(mMediaUri);
                 }
                 else {
                     noVideoImageView = (ImageView) rootView.findViewById(R.id.noVideoImageView);
                     noVideoImageView.setVisibility(View.VISIBLE);
                     mPlayerView.setVisibility(View.GONE);
+                    Picasso.with(getContext()).load(R.drawable.baking_app_ico).into(noVideoImageView);
+
+
                     // noVideoImageView.setImageResource(R.drawable.ic_launcher_background);
                 }
             }
@@ -178,9 +232,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
                 MediaButtonReceiver.buildMediaButtonPendingIntent
                         (getContext(), PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
 
-        ////////////////////////////////////
         PendingIntent contentPendingIntent = PendingIntent.getActivity
-                (getContext(), 0, new Intent(getContext(), StepFragment.class), 0);
+                (getContext(), 0, new Intent(getContext(), StepContainerActivity.class), 0);
 
         builder.setContentTitle(getString(R.string.guess))
                 .setContentText(getString(R.string.notification_text))

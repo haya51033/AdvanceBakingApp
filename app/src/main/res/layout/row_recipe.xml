@@ -27,10 +27,4 @@
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
-
-
-
-
-
-
 </LinearLayout>
