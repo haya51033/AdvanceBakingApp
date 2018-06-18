@@ -1,6 +1,7 @@
 package com.example.android.advancebakingapp;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +17,8 @@ import com.example.android.advancebakingapp.Api.RecipeApi;
 import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.Model.Recipe;
 import com.example.android.advancebakingapp.Model.Step;
+import com.example.android.advancebakingapp.Widget.BakingAppWidgetProvider;
+import com.example.android.advancebakingapp.Widget.WidgetUpdateService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +41,20 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
    public final ArrayList<Ingredient> ingredients = new ArrayList<>();
    public final ArrayList<Step> steps = new ArrayList<>();
    public ArrayList <Recipe> arr;
+    private static final String KEY_RECIPES = "recipes";
+    public static final String BUNDLE = "bundle";
+    public static final String INGREDIENTS = "ingredients";
+    private Recipe[] mRecipesArr;
+
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelable(BUNDLE_RECYCLER_LAYOUT,
                 mLinearLayoutManager.onSaveInstanceState());
         lastFirstVisiblePosition = ((LinearLayoutManager)rvRecipe.getLayoutManager())
-                .findFirstCompletelyVisibleItemPosition();
+                .findFirstVisibleItemPosition();
         savedInstanceState.putInt("INT_VALUE",lastFirstVisiblePosition);
+        savedInstanceState.putParcelableArray(KEY_RECIPES, mRecipesArr);
         super.onSaveInstanceState(savedInstanceState);
 
     }
@@ -63,6 +72,17 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(savedInstanceState != null){
+            Parcelable[] recipes = savedInstanceState.getParcelableArray(KEY_RECIPES);
+            if (recipes != null)
+            {
+                mRecipesArr = new Recipe[recipes.length];
+                for (int i = 0; i < recipes.length; i++)
+                {
+                    mRecipesArr[i] = (Recipe) recipes[i];
+                }
+            }
+        }
 
         rvRecipe = (RecyclerView) findViewById(R.id.recyclerView_recipes);
         mLinearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -79,19 +99,17 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
                     mRecipes = (ArrayList<Recipe>) response.body();
                     if (mRecipes != null)
                     {
-                        Toast.makeText(getApplicationContext(),"Yessssss",Toast.LENGTH_SHORT).show();
                         final List<Recipe> movies = mRecipes;
+                        mRecipesArr = mRecipes.toArray(new Recipe[mRecipes.size()]);
                         arrayList = new ArrayList<>();//create a list to store the objects
                         arrayList.addAll(movies);
                         configureRecyclerView(arrayList);
-
-                        int zz=1+1;
 
                     }
 
                 }
                 else {
-                    Toast.makeText(getApplicationContext(),"nooo",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"no Data..",Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -128,10 +146,14 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
             steps.clear();
         }
         ingredients.addAll(arr.get(0).getIngredients());
-       // ingredients.addAll(recipe.getIngredients());
-      //  steps.addAll(recipe.getSteps());
         steps.addAll(arr.get(0).getSteps());
 
+
+        Intent intent1 = new Intent(getApplicationContext(), BakingAppWidgetProvider.class);
+        Bundle args1 = new Bundle();
+        args1.putSerializable("INGREDIENTS",ingredients);
+        intent1.putExtra("BUNDLE", args1);
+        this.sendBroadcast(intent1);
 
         Intent intent = new Intent(getApplicationContext(), RecipeFragment.class);
         Bundle args = new Bundle();
@@ -141,4 +163,5 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         startActivity(intent);
 
     }
+
 }

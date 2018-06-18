@@ -3,7 +3,7 @@ package com.example.android.advancebakingapp.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.Parcelable.Creator;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -78,5 +78,6 @@ public class Ingredient implements Parcelable
     public int describeContents() {
         return 0;
     }
+
 
 }

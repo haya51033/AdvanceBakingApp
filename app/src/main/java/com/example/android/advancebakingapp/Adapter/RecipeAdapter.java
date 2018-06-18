@@ -2,6 +2,8 @@ package com.example.android.advancebakingapp.Adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,17 +11,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.advancebakingapp.Activity.RecipeFragment;
+import com.example.android.advancebakingapp.MainActivity;
+import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.Model.Recipe;
 import com.example.android.advancebakingapp.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeAdapter extends
         RecyclerView.Adapter<RecipeAdapter.RecipeAdapterViewHolder> {
     private Context context;
     private ArrayList<Recipe> mRecipes;
     private RecipeOnClickHandler mRecipeOnClickHandler;
+
+    public static final String INGREDIENTS = "mIngredients";
+    public static final String INGREDIENTS_BUNDLE = "ingredientsBundle";
 
 
     public RecipeAdapter(RecipeOnClickHandler recipeOnClickHandler) {
@@ -53,6 +62,8 @@ public class RecipeAdapter extends
         Recipe recipe = mRecipes.get(position);
         String imageUrl = mRecipes.get(position).getImage();
         TextView tv = viewHolder.mTextView;
+        viewHolder.mIngredients = mRecipes.get(position).getIngredients();
+
         tv.setText(recipe.getName());
 
         if (imageUrl.equals("") && imageUrl.isEmpty())
@@ -83,12 +94,19 @@ public class RecipeAdapter extends
 
         public final ImageView mImageView;
         public final TextView mTextView;
+        private List<Ingredient> mIngredients;
+
         public RecipeAdapterViewHolder(View view) {
             super(view);
             mImageView = (ImageView) view.findViewById(R.id.iv_recipe_image);
             mTextView = (TextView) view.findViewById(R.id.tv_recipe_name);
+
             view.setOnClickListener(this);
+
+
+
         }
+
 
 
         @Override

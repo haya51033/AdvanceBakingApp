@@ -1,7 +1,5 @@
 package com.example.android.advancebakingapp.Activity;
 
-
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,23 +7,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
-import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.Model.Step;
 import com.example.android.advancebakingapp.R;
 import com.google.android.exoplayer2.C;
@@ -48,14 +41,12 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
-import android.support.v4.content.ContextCompat;
 
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.app.NotificationCompat;
 
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -70,8 +61,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     ArrayList<Step> saveSteps = new ArrayList<>();
     public long position;
     public TextView videoDescription;
-    private SimpleExoPlayer mExoPlayer;
-    private SimpleExoPlayerView mPlayerView;
+    public SimpleExoPlayer mExoPlayer;
+    public SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
     private NotificationManager mNotificationManager;
@@ -80,13 +71,18 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     ImageView nextButton;
     ImageView previousButton;
     View rootView;
-    Dialog mFullScreenDialog;
+    String SCREEN_STATE;
+    String returnedScreen;
+
 
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putLong(SELECTED_POSITION,position);
+   //     savedInstanceState.putString(SCREEN_STATE,returnedScreen);
+
         super.onSaveInstanceState(savedInstanceState);
+
     }
 
 
@@ -94,15 +90,40 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
     }
 
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
             position = savedInstanceState.getLong(SELECTED_POSITION);
-            if(isLandscape() && !isTablet(getContext())){
-                Toast.makeText(getActivity(),"lanscape   " , Toast.LENGTH_LONG).show();
+
+          //  returnedScreen =
+                //    enterFullScreen();
+           //   exitFullscreen();
+
+        }
+    }
+
+
+   /* @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            if(!returnedScreen.isEmpty()) {
+                if (returnedScreen.equals("H")) {
+                    enterFullScreen();
+                    Toast.makeText(getActivity()," onViewStateRestored",Toast.LENGTH_LONG).show();
+                } else exitFullscreen();
             }
         }
+        super.onViewStateRestored(savedInstanceState);
+    }*/
+
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+
         rootView = inflater.inflate(R.layout.activity_step, container, false);
         //root
         final FrameLayout frameLayout = (FrameLayout) rootView.findViewById(R.id.step_frame_root);
@@ -111,11 +132,21 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                 (getResources(), R.drawable.ic_launcher_background));
 
+        if(savedInstanceState!=null) {
+            super.onActivityCreated(savedInstanceState);
+            position = savedInstanceState.getLong(SELECTED_POSITION);
+          //  enterFullScreen();
+            //exitFullscreen();
+
+        }
         startActivity();
         return rootView;
     }
 
-    private boolean isLandscape()
+
+
+
+    public boolean isLandscape()
     {
         int orientation = getActivity().getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -126,35 +157,55 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     {
         boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
         boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+
         return (xlarge || large);
     }
 
-   /* private void initFullscreenDialog() {
 
-        mFullScreenDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
-            public void onBackPressed() {
-                if (isLandscape() && (!isTablet(getContext())))
-                    closeFullscreenDialog();
-                super.onBackPressed();
-            }
-        };
+    public void exitFullscreen() {
+       if(!isLandscape() && !isTablet(getContext())){
+           Toast.makeText(getActivity(),"EXIT full screen  " , Toast.LENGTH_LONG).show();
+
+           getActivity().getWindow()
+                   .setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+                           WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+           returnedScreen = "V";
+       }
+
     }
-*/
+
+    public boolean enterFullScreen(){
+        if(isLandscape() && !isTablet(getContext())){
+            Toast.makeText(getActivity(),"enter full screen  " , Toast.LENGTH_LONG).show();
+            mPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+            getActivity().getWindow()
+                    .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            returnedScreen = "H";
+            return true;
+        }
+
+       else
+        {
+            returnedScreen = "V";
+            return false;}
+    }
+
     public void startActivity(){
         Intent intent = getActivity().getIntent();
         final Bundle args = intent.getBundleExtra("BUNDLE");
         if(args != null) {
-           // stepsArrayList = (ArrayList<Step>) args.getSerializable("stepsArrayList");
-
             stepsArrayList = (ArrayList<Step>) args.getSerializable("steps_list");
-
             saveSteps.addAll(stepsArrayList);
 
             stepIndex = args.getInt("SELECTED_INDEX", 0);
             if (saveSteps.size() != 0) {
                 step = saveSteps.get(stepIndex);
-             //   step = saveSteps.get(0);
-
                 if(!step.getVideoURL().equals("") || !step.getThumbnailURL().equals("")){
                     initializeMediaSession();
 
@@ -164,20 +215,6 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
                         mMediaUri = Uri.parse(step.getVideoURL());
                     if(!step.getVideoURL().equals("") && !step.getThumbnailURL().equals(""))
                         mMediaUri = Uri.parse(step.getVideoURL());
-
-                    if(isLandscape() && !isTablet(getContext())){
-                        Toast.makeText(getActivity(),"lanscape   " , Toast.LENGTH_LONG).show();
-
-                        ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
-                        mFullScreenDialog.addContentView(mPlayerView,
-                                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.MATCH_PARENT));
-                      //  mFullScreenIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.baking_app_ico));
-                      //  mExoPlayerFullscreen = true;
-                        mFullScreenDialog.show();
-
-
-                    }
                     initializePlayer(mMediaUri);
                 }
                 else {

@@ -1,9 +1,12 @@
 package com.example.android.advancebakingapp.Model;
 
-import java.util.List;
+import java.util.ArrayList;
+
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.Parcelable.Creator;
+import android.text.TextUtils;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -16,12 +19,18 @@ public class Recipe implements Parcelable
     @SerializedName("name")
     @Expose
     private String name;
+
+    public void setIngredients(ArrayList<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+
     @SerializedName("ingredients")
     @Expose
-    private List<Ingredient> ingredients = null;
+    private ArrayList<Ingredient> ingredients = null;
     @SerializedName("steps")
     @Expose
-    private List<Step> steps = null;
+    private ArrayList<Step> steps = null;
     @SerializedName("servings")
     @Expose
     private Integer servings;
@@ -73,19 +82,17 @@ public class Recipe implements Parcelable
         this.name = name;
     }
 
-    public List<Ingredient> getIngredients() {
-        return ingredients;
+    public ArrayList<Ingredient> getIngredients() {
+        return this.ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+
+
+    public ArrayList<Step> getSteps() {
+        return this.steps;
     }
 
-    public List<Step> getSteps() {
-        return steps;
-    }
-
-    public void setSteps(List<Step> steps) {
+    public void setSteps(ArrayList<Step> steps) {
         this.steps = steps;
     }
 
@@ -117,6 +124,7 @@ public class Recipe implements Parcelable
     public int describeContents() {
         return 0;
     }
+
 
 }
 

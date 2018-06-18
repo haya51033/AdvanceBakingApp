@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.advancebakingapp.Adapter.RecipeAdapter;
 import com.example.android.advancebakingapp.Adapter.StepAdapter;
 import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.Model.Step;
@@ -50,6 +52,7 @@ public class RecipeActivity extends Fragment
     private static final String STRING_VALUE = "string_value";
     private static final String STRING_VALUE1 = "string_value1";
 
+
     int positionIndex;
     int lastFirstVisiblePosition;
     public LinearLayoutManager mLinearLayoutManager;
@@ -57,6 +60,9 @@ public class RecipeActivity extends Fragment
     int stepIndex=0;
 
     View rootView;
+
+    private Ingredient[] mIngredients;
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -218,6 +224,8 @@ public class RecipeActivity extends Fragment
             if(steps.size()!=0){
                 configureRecyclerView(steps);
             }
+
+
         }
 
 
@@ -226,6 +234,25 @@ public class RecipeActivity extends Fragment
     }
 
 
+    private void returnIntentExtras()
+    {
+        if (getActivity().getIntent().getExtras() != null)
+        {
+            Bundle ingredientsBundle = getActivity().getIntent().getExtras().getBundle(RecipeAdapter.INGREDIENTS_BUNDLE);
+            if (ingredientsBundle != null)
+            {
+                Parcelable[] ingredientsParcelableArray = ingredientsBundle.getParcelableArray(RecipeAdapter.INGREDIENTS);
+                if (ingredientsParcelableArray != null)
+                {
+                    mIngredients = new Ingredient[ingredientsParcelableArray.length];
+                    for (int i = 0; i < ingredientsParcelableArray.length; i++)
+                    {
+                        mIngredients[i] = (Ingredient) ingredientsParcelableArray[i];
+                    }
+                }
+            }
+        }
+    }
 
     private void configureRecyclerView(ArrayList steps) {
         stepsRecyclerView = (RecyclerView) rootView.findViewById(R.id.recipe_details_steps);
