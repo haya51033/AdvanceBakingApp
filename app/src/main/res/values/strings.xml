@@ -12,6 +12,7 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="noRecipe">No Recipe</string>
+    <string name="item_element_text">Brownies</string>
 
 
 </resources>

@@ -73,7 +73,17 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     View rootView;
     String SCREEN_STATE;
     String returnedScreen;
+    FrameLayout frameLayout;
 
+    public static void setLayoutHeight(View view, boolean orientationLandscape) {
+        view.getLayoutParams().height = orientationLandscape ? FrameLayout.LayoutParams.MATCH_PARENT : 600;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+     //   binding.setOrientationLandscape(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+    }
 
 
     @Override
@@ -98,7 +108,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
             super.onActivityCreated(savedInstanceState);
             position = savedInstanceState.getLong(SELECTED_POSITION);
 
-          //  returnedScreen =
+
+            //  returnedScreen =
                 //    enterFullScreen();
            //   exitFullscreen();
 
@@ -126,7 +137,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
         rootView = inflater.inflate(R.layout.activity_step, container, false);
         //root
-        final FrameLayout frameLayout = (FrameLayout) rootView.findViewById(R.id.step_frame_root);
+        frameLayout = (FrameLayout) rootView.findViewById(R.id.step_frame_root);
 
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
         mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
@@ -135,10 +146,15 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
             position = savedInstanceState.getLong(SELECTED_POSITION);
-          //  enterFullScreen();
+          //
             //exitFullscreen();
 
+
         }
+      /*  if( (isLandscape()) && (!isTablet(getActivity())) ){
+            setLayoutHeight(mPlayerView,true);
+        }*/
+        enterFullScreen();
         startActivity();
         return rootView;
     }
@@ -177,12 +193,13 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     public boolean enterFullScreen(){
         if(isLandscape() && !isTablet(getContext())){
             Toast.makeText(getActivity(),"enter full screen  " , Toast.LENGTH_LONG).show();
-            mPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            frameLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
 
             getActivity().getWindow()
                     .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

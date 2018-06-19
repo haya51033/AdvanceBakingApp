@@ -2,6 +2,10 @@ package com.example.android.advancebakingapp;
 
 import android.content.Intent;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,6 +18,7 @@ import com.example.android.advancebakingapp.Activity.RecipeFragment;
 import com.example.android.advancebakingapp.Adapter.RecipeAdapter;
 import com.example.android.advancebakingapp.Api.ApiActivity;
 import com.example.android.advancebakingapp.Api.RecipeApi;
+import com.example.android.advancebakingapp.IdlingResource.SimpleIdlingResource;
 import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.Model.Recipe;
 import com.example.android.advancebakingapp.Model.Step;
@@ -45,6 +50,24 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     public static final String BUNDLE = "bundle";
     public static final String INGREDIENTS = "ingredients";
     private Recipe[] mRecipesArr;
+
+
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
+
 
 
     @Override

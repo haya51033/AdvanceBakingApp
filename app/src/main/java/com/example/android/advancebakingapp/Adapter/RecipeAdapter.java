@@ -30,21 +30,18 @@ public class RecipeAdapter extends
     public static final String INGREDIENTS = "mIngredients";
     public static final String INGREDIENTS_BUNDLE = "ingredientsBundle";
 
-
     public RecipeAdapter(RecipeOnClickHandler recipeOnClickHandler) {
         mRecipeOnClickHandler = recipeOnClickHandler;
-
     }
 
     public void setRecipesData(ArrayList<Recipe> recipeData) {
         mRecipes = recipeData;
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, mRecipes.size());
+       // notifyDataSetChanged();
     }
 
 
-
     @Override
-
     public RecipeAdapter.RecipeAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -103,11 +100,7 @@ public class RecipeAdapter extends
 
             view.setOnClickListener(this);
 
-
-
         }
-
-
 
         @Override
         public void onClick(View view) {
@@ -115,13 +108,9 @@ public class RecipeAdapter extends
             Recipe selectedRecipe = mRecipes.get(position);
             mRecipeOnClickHandler.onClickRecipe(selectedRecipe);
         }
-
     }
 
     public interface RecipeOnClickHandler {
         void onClickRecipe(Recipe recipe);
     }
-
-
-
 }

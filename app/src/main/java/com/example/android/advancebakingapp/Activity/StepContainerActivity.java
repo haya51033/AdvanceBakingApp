@@ -74,6 +74,7 @@ public class StepContainerActivity extends AppCompatActivity {
                                 .add(R.id.stepContainer, stepFragment)
                                 .commit();
 
+
                    }
                     else {
                         StepFragment stepFragment = new StepFragment();

@@ -39,6 +39,9 @@
         <meta-data
             android:name="android.appwidget.provider"
             android:resource="@xml/baking_app_widget_provider_info"/>
+        <meta-data
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version"/>
         </receiver>
         <service
             android:name=".Widget.listViewsService"

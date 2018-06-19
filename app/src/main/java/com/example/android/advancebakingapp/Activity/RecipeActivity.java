@@ -273,7 +273,6 @@ public class RecipeActivity extends Fragment
         step1 = new ArrayList<>();
         step1.add(step);
 
-       // Intent intent = new Intent(getActivity(), RecipeFragment.class);
         Intent intent = new Intent(getActivity(), StepContainerActivity.class);
 
 
