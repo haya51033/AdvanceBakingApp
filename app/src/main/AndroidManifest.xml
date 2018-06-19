@@ -42,6 +42,8 @@
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version"/>
         </receiver>
+
+
         <service
             android:name=".Widget.listViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS"/>

@@ -61,6 +61,7 @@ public class RecipeFragment extends AppCompatActivity {
             fragmentManager.beginTransaction()
                     .add(R.id.stepContainer2, stepDescriptionFragment)
                     .commit();
+            String ss;
 
         }
     }
