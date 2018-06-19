@@ -52,7 +52,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class StepFragment extends Fragment implements View.OnClickListener, ExoPlayer.EventListener{
-    ArrayList<Step> stepList;
     ArrayList<Step> stepsArrayList= new ArrayList<>();
     Step step;
     ImageView noVideoImageView;
@@ -60,7 +59,6 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     int stepIndex;
     ArrayList<Step> saveSteps = new ArrayList<>();
     public long position;
-    public TextView videoDescription;
     public SimpleExoPlayer mExoPlayer;
     public SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
@@ -68,29 +66,19 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     private NotificationManager mNotificationManager;
     private static final String TAG = RecipeActivity.class.getSimpleName();
     public Uri mMediaUri;
-    ImageView nextButton;
-    ImageView previousButton;
     View rootView;
-    String SCREEN_STATE;
     String returnedScreen;
     FrameLayout frameLayout;
-
-    public static void setLayoutHeight(View view, boolean orientationLandscape) {
-        view.getLayoutParams().height = orientationLandscape ? FrameLayout.LayoutParams.MATCH_PARENT : 600;
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-     //   binding.setOrientationLandscape(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
     }
 
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putLong(SELECTED_POSITION,position);
-   //     savedInstanceState.putString(SCREEN_STATE,returnedScreen);
-
         super.onSaveInstanceState(savedInstanceState);
 
     }
@@ -107,29 +95,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
             position = savedInstanceState.getLong(SELECTED_POSITION);
-
-
-            //  returnedScreen =
-                //    enterFullScreen();
-           //   exitFullscreen();
-
         }
     }
-
-
-   /* @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        if(savedInstanceState != null){
-            if(!returnedScreen.isEmpty()) {
-                if (returnedScreen.equals("H")) {
-                    enterFullScreen();
-                    Toast.makeText(getActivity()," onViewStateRestored",Toast.LENGTH_LONG).show();
-                } else exitFullscreen();
-            }
-        }
-        super.onViewStateRestored(savedInstanceState);
-    }*/
-
 
 
     @Override
@@ -146,21 +113,12 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
             position = savedInstanceState.getLong(SELECTED_POSITION);
-          //
-            //exitFullscreen();
-
 
         }
-      /*  if( (isLandscape()) && (!isTablet(getActivity())) ){
-            setLayoutHeight(mPlayerView,true);
-        }*/
         enterFullScreen();
         startActivity();
         return rootView;
     }
-
-
-
 
     public boolean isLandscape()
     {
@@ -173,21 +131,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     {
         boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
         boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
-
         return (xlarge || large);
-    }
-
-
-    public void exitFullscreen() {
-       if(!isLandscape() && !isTablet(getContext())){
-           Toast.makeText(getActivity(),"EXIT full screen  " , Toast.LENGTH_LONG).show();
-
-           getActivity().getWindow()
-                   .setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-                           WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-           returnedScreen = "V";
-       }
-
     }
 
     public boolean enterFullScreen(){
@@ -239,15 +183,11 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
                     noVideoImageView.setVisibility(View.VISIBLE);
                     mPlayerView.setVisibility(View.GONE);
                     Picasso.with(getContext()).load(R.drawable.baking_app_ico).into(noVideoImageView);
-
-
-                    // noVideoImageView.setImageResource(R.drawable.ic_launcher_background);
                 }
             }
 
         }
     }
-
 
     @Override
     public void onPause() {
@@ -312,7 +252,6 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
-            //  Toast.makeText(getContext(),"yess", Toast.LENGTH_LONG).show();
             LoadControl loadControl = new DefaultLoadControl();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
             mPlayerView.setPlayer(mExoPlayer);
@@ -324,10 +263,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
             String userAgent = Util.getUserAgent(getContext(), "AdvanceBakingApp");
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
-           /* if (position != C.TIME_UNSET){
-               mExoPlayer.seekTo(position);
-            }
-            long tt = position;*/
+
             if (position != C.TIME_UNSET)
                 mExoPlayer.seekTo(position);
             mExoPlayer.prepare(mediaSource);
@@ -373,8 +309,6 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
     @Override
     public void onClick(View v) {
-
-
     }
 
     /**
@@ -396,9 +330,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
             mMediaSession.setActive(false);
         }
         super.onDestroy();
-
     }
-
 
     // ExoPlayer Event Listeners
 
@@ -423,8 +355,6 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
      */
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
-
         if((playbackState == ExoPlayer.STATE_READY) && playWhenReady){
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoPlayer.getCurrentPosition(), 1f);
@@ -434,13 +364,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
                     mExoPlayer.getCurrentPosition(), 1f);
         }
         mMediaSession.setPlaybackState(mStateBuilder.build());
-        //  position = mExoPlayer.getCurrentPosition();
-       /* if (position != C.TIME_UNSET){
-            mExoPlayer.seekTo(position);
-        }*/
         showNotification(mStateBuilder.build());
     }
-
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {

@@ -1,14 +1,10 @@
 package com.example.android.advancebakingapp.Activity;
 
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
 import android.support.v4.app.Fragment;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,19 +15,16 @@ import android.widget.TextView;
 import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.Model.Step;
 import com.example.android.advancebakingapp.R;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+
 
 import java.util.ArrayList;
 
 public class StepDescriptionFragment extends Fragment {
     ArrayList<Step> stepsArrayList= new ArrayList<>();
     Step step;
-    ImageView noVideoImageView;
     int stepIndex;
     ArrayList<Step> saveSteps = new ArrayList<>();
     public TextView videoDescription;
-    public Uri mMediaUri;
     ImageView nextButton;
     ImageView previousButton;
     View rootView;
@@ -57,8 +50,7 @@ public class StepDescriptionFragment extends Fragment {
         Intent intent = getActivity().getIntent();
         final Bundle args = intent.getBundleExtra("BUNDLE");
         if(args != null) {
-           // stepsArrayList = (ArrayList<Step>) args.getSerializable("stepsArrayList");
-            //steps_list
+
             stepsArrayList = (ArrayList<Step>) args.getSerializable("steps_list");
             ingredients = (ArrayList<Ingredient>) args.getSerializable("ingredients_list");
 
@@ -66,7 +58,6 @@ public class StepDescriptionFragment extends Fragment {
            stepIndex = args.getInt("SELECTED_INDEX", 0);
             if (saveSteps.size() != 0) {
                 step = saveSteps.get(stepIndex);
-               // step = saveSteps.get(0);
                 if(step.getDescription() != null) {
                     videoDescription = (TextView) rootView.findViewById(R.id.stepDescriptionTextView);
                     videoDescription.setText(step.getDescription());
@@ -99,7 +90,6 @@ public class StepDescriptionFragment extends Fragment {
 
 
     public void nextButton(){
-      //  Intent intent = new Intent(getActivity(), RecipeFragment.class);
         Intent intent = new Intent(getActivity(), StepContainerActivity.class);
         Bundle args = new Bundle();
         args.putSerializable("steps_list",stepsArrayList);
@@ -111,7 +101,6 @@ public class StepDescriptionFragment extends Fragment {
     }
 
     public void backButton(){
-       // Intent intent = new Intent(getActivity(), RecipeFragment.class);
         Intent intent = new Intent(getActivity(), StepContainerActivity.class);
         Bundle args = new Bundle();
         args.putSerializable("steps_list",stepsArrayList);

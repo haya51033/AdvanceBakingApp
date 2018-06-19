@@ -61,9 +61,6 @@ public class RecipeActivity extends Fragment
 
     View rootView;
 
-    private Ingredient[] mIngredients;
-
-
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString(STRING_VALUE, collaps);
@@ -77,9 +74,6 @@ public class RecipeActivity extends Fragment
         super.onSaveInstanceState(savedInstanceState);
 
     }
-
-
-
 
 
     public RecipeActivity(){}
@@ -102,23 +96,8 @@ public class RecipeActivity extends Fragment
             collaps1 = savedInstanceState.getString(STRING_VALUE1);
             positionIndex = savedInstanceState.getInt("INT_VALUE");
 
-
-            /*gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Trigger the callback method and pass in the position that was clicked
-                mCallback.onImageSelected(position);
-            }
-        });*/
-
-
-
-
-
         }
 
-
-      //  setContentView(R.layout.activity_recipe);
         stepsRecyclerView = (RecyclerView)rootView.findViewById(R.id.recipe_details_steps);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayout = (LinearLayout) rootView.findViewById(R.id.expandedLayout);
@@ -126,12 +105,7 @@ public class RecipeActivity extends Fragment
         mLinearLayout2 = (LinearLayout) rootView.findViewById(R.id.expandedLayout2);
         mLinearLayoutHeader2 = (LinearLayout) rootView.findViewById(R.id.header2);
 
-
-
-
-
         /////////////
-
 
          if(savedInstanceState != null)
         {
@@ -149,19 +123,14 @@ public class RecipeActivity extends Fragment
 
             if (collaps1.equals("true"))
             {
-
                  collapse1();
-
-                Toast.makeText(getActivity(),"truee",Toast.LENGTH_LONG).show();
-
             }
             else if (collaps1.equals("false")){
-                Toast.makeText(getActivity(),"faalse",Toast.LENGTH_LONG).show();
                 expand1();
             }
             else
             {
-                //collapse1();
+                expand();
                 expand1();
             }
 
@@ -174,10 +143,7 @@ public class RecipeActivity extends Fragment
 
         if(mLinearLayout != null) {
         mLinearLayout.setVisibility(View.GONE);
-
     }
-
-
          mLinearLayoutHeader.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -189,10 +155,8 @@ public class RecipeActivity extends Fragment
                 }
             }
         });
-        //set visibility to GONE
         if(mLinearLayout2 != null) {
-            mLinearLayout2.setVisibility(View.GONE);
-        }
+            mLinearLayout2.setVisibility(View.GONE); }
 
         mLinearLayoutHeader2.setOnClickListener(new View.OnClickListener() {
 
@@ -224,34 +188,8 @@ public class RecipeActivity extends Fragment
             if(steps.size()!=0){
                 configureRecyclerView(steps);
             }
-
-
         }
-
-
-
         return rootView;
-    }
-
-
-    private void returnIntentExtras()
-    {
-        if (getActivity().getIntent().getExtras() != null)
-        {
-            Bundle ingredientsBundle = getActivity().getIntent().getExtras().getBundle(RecipeAdapter.INGREDIENTS_BUNDLE);
-            if (ingredientsBundle != null)
-            {
-                Parcelable[] ingredientsParcelableArray = ingredientsBundle.getParcelableArray(RecipeAdapter.INGREDIENTS);
-                if (ingredientsParcelableArray != null)
-                {
-                    mIngredients = new Ingredient[ingredientsParcelableArray.length];
-                    for (int i = 0; i < ingredientsParcelableArray.length; i++)
-                    {
-                        mIngredients[i] = (Ingredient) ingredientsParcelableArray[i];
-                    }
-                }
-            }
-        }
     }
 
     private void configureRecyclerView(ArrayList steps) {
@@ -275,7 +213,6 @@ public class RecipeActivity extends Fragment
 
         Intent intent = new Intent(getActivity(), StepContainerActivity.class);
 
-
         Bundle args = new Bundle();
         args.putSerializable("step_list",step1);
         args.putSerializable("steps_list",stepArrayList);
@@ -286,14 +223,11 @@ public class RecipeActivity extends Fragment
     }
 
     public void expand() {
-        //set Visible
         collaps="false";
         mLinearLayout.setVisibility(View.VISIBLE);
-
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         mLinearLayout.measure(widthSpec, heightSpec);
-
         ValueAnimator mAnimator = slideAnimator(0, mLinearLayout.getMeasuredHeight());
         mAnimator.start();
     }
