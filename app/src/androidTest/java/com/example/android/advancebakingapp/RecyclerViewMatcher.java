@@ -1,6 +1,7 @@
 package com.example.android.advancebakingapp;
 
 import android.content.res.Resources;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import org.hamcrest.Description;
@@ -50,6 +51,8 @@ public class RecyclerViewMatcher {
                     RecyclerView recyclerView =
                             (RecyclerView) view.getRootView().findViewById(recyclerViewId);
                     if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
+                      //  SystemClock.sleep(1000);
+
                         childView = recyclerView.findViewHolderForAdapterPosition(position).itemView;
                     }
                     else {
