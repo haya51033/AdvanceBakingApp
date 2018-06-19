@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,8 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
@@ -58,7 +61,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     String SELECTED_POSITION;
     int stepIndex;
     ArrayList<Step> saveSteps = new ArrayList<>();
-    public long position;
+    public long position = -1;
+    static long pausePosition = -1;
     public SimpleExoPlayer mExoPlayer;
     public SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
@@ -71,14 +75,38 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     FrameLayout frameLayout;
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStop()
+    {
+        super.onStop();
+        if (Util.SDK_INT > 23)
+        {
+            releasePlayer();
+        }
     }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        pausePosition = -1;
+
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        if (mExoPlayer != null)
+        {
+            position = mExoPlayer.getCurrentPosition();
+        }
+        super.onDestroyView();
+    }
+
 
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putLong(SELECTED_POSITION,position);
+        savedInstanceState.putLong(SELECTED_POSITION,pausePosition);
         super.onSaveInstanceState(savedInstanceState);
 
     }
@@ -94,7 +122,6 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         super.onCreate(savedInstanceState);
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
-            position = savedInstanceState.getLong(SELECTED_POSITION);
         }
     }
 
@@ -112,11 +139,49 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
-            position = savedInstanceState.getLong(SELECTED_POSITION);
+            long testPosition =savedInstanceState.getLong(SELECTED_POSITION);
+            if(testPosition >=0){
+                pausePosition = testPosition;
+            }
+        }
+
+
+        enterFullScreen();
+
+        Intent intent = getActivity().getIntent();
+        final Bundle args = intent.getBundleExtra("BUNDLE");
+        if(args != null) {
+            stepsArrayList = (ArrayList<Step>) args.getSerializable("steps_list");
+            saveSteps.addAll(stepsArrayList);
+
+            stepIndex = args.getInt("SELECTED_INDEX", 0);
+            if (saveSteps.size() != 0) {
+                step = saveSteps.get(stepIndex);
+                if(!step.getVideoURL().equals("") || !step.getThumbnailURL().equals("")){
+
+                    initializeMediaSession();
+                    if(step.getVideoURL().equals(""))
+                        mMediaUri = Uri.parse(step.getThumbnailURL());
+                    if(step.getThumbnailURL().equals(""))
+                        mMediaUri = Uri.parse(step.getVideoURL());
+                    if(!step.getVideoURL().equals("") && !step.getThumbnailURL().equals(""))
+                        mMediaUri = Uri.parse(step.getVideoURL());
+                  initializePlayer(mMediaUri);
+                }
+                else {
+                    noVideoImageView = (ImageView) rootView.findViewById(R.id.noVideoImageView);
+                    noVideoImageView.setVisibility(View.VISIBLE);
+                    mPlayerView.setVisibility(View.GONE);
+                    Picasso.with(getContext()).load(R.drawable.baking_app_ico).into(noVideoImageView);
+                }
+            }
 
         }
-        enterFullScreen();
-        startActivity();
+
+
+
+
+
         return rootView;
     }
 
@@ -151,49 +216,22 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
             return true;
         }
 
-       else
+        else
         {
             returnedScreen = "V";
             return false;}
     }
 
-    public void startActivity(){
-        Intent intent = getActivity().getIntent();
-        final Bundle args = intent.getBundleExtra("BUNDLE");
-        if(args != null) {
-            stepsArrayList = (ArrayList<Step>) args.getSerializable("steps_list");
-            saveSteps.addAll(stepsArrayList);
-
-            stepIndex = args.getInt("SELECTED_INDEX", 0);
-            if (saveSteps.size() != 0) {
-                step = saveSteps.get(stepIndex);
-                if(!step.getVideoURL().equals("") || !step.getThumbnailURL().equals("")){
-                    initializeMediaSession();
-
-                    if(step.getVideoURL().equals(""))
-                        mMediaUri = Uri.parse(step.getThumbnailURL());
-                    if(step.getThumbnailURL().equals(""))
-                        mMediaUri = Uri.parse(step.getVideoURL());
-                    if(!step.getVideoURL().equals("") && !step.getThumbnailURL().equals(""))
-                        mMediaUri = Uri.parse(step.getVideoURL());
-                    initializePlayer(mMediaUri);
-                }
-                else {
-                    noVideoImageView = (ImageView) rootView.findViewById(R.id.noVideoImageView);
-                    noVideoImageView.setVisibility(View.VISIBLE);
-                    mPlayerView.setVisibility(View.GONE);
-                    Picasso.with(getContext()).load(R.drawable.baking_app_ico).into(noVideoImageView);
-                }
-            }
-
-        }
-    }
 
     @Override
     public void onPause() {
+        if (mExoPlayer != null)
+            pausePosition = mExoPlayer.getCurrentPosition();
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         super.onPause();
-        if (mExoPlayer != null) {
-            position = mExoPlayer.getCurrentPosition();
+        if (Util.SDK_INT <= 23)
+        {
+            releasePlayer();
         }
     }
 
@@ -248,31 +286,38 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
      * Initialize ExoPlayer.
      * @param mediaUri The URI of the sample to play.
      */
-    private void initializePlayer(Uri mediaUri) {
-        if (mExoPlayer == null) {
-            // Create an instance of the ExoPlayer.
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            LoadControl loadControl = new DefaultLoadControl();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-            mPlayerView.setPlayer(mExoPlayer);
 
-            // Set the ExoPlayer.EventListener to this activity.
-            mExoPlayer.addListener(this);
+    private void initializePlayer(Uri mediaUri)
+    {
+            if (mExoPlayer == null) {
+                // Create an instance of the ExoPlayer.
+                TrackSelector trackSelector = new DefaultTrackSelector();
+                LoadControl loadControl = new DefaultLoadControl();
+                mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+                mPlayerView.setPlayer(mExoPlayer);
+                if (pausePosition != -1) {
+                    mExoPlayer.seekTo(pausePosition);
+                    pausePosition = -1;
+                }
+                else {
+                    mExoPlayer.seekTo(0);
+                }
+                // Set the ExoPlayer.EventListener to this activity.
+                mExoPlayer.addListener(this);
 
-            // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(getContext(), "AdvanceBakingApp");
-            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
+                // Prepare the MediaSource.
+                String userAgent = Util.getUserAgent(getContext(), "AdvanceBakingApp");
+                MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                        getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
 
-            if (position != C.TIME_UNSET)
-                mExoPlayer.seekTo(position);
-            mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+
+                mExoPlayer.prepare(mediaSource);
+                mExoPlayer.setPlayWhenReady(true);
+            }
+            else {
+            }
         }
-        else {
-            // Toast.makeText(getContext(),"false",Toast.LENGTH_LONG).show();
-        }
-    }
+
 
 
     private void initializeMediaSession() {
@@ -315,10 +360,15 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
      * Release ExoPlayer.
      */
     private void releasePlayer() {
-        mNotificationManager.cancelAll();
-        mExoPlayer.stop();
-        mExoPlayer.release();
+        if (mExoPlayer != null)
+        {
+            mNotificationManager.cancelAll();
+            mExoPlayer.stop();
+            mExoPlayer.release();
+        }
+
         mExoPlayer = null;
+
     }
     /**
      * Release the player when the activity is destroyed.
@@ -328,6 +378,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if(mExoPlayer != null){
             releasePlayer();
             mMediaSession.setActive(false);
+
+
         }
         super.onDestroy();
     }
@@ -376,6 +428,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     }
 
 
+
     /**
      * Media Session Callbacks, where all external clients control the player.
      */
@@ -388,6 +441,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         @Override
         public void onPause() {
             mExoPlayer.setPlayWhenReady(false);
+            //      mExoPlayer.seekTo(position);
+
         }
 
         @Override

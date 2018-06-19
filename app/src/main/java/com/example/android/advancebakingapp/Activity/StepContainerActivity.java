@@ -66,9 +66,7 @@ public class StepContainerActivity extends AppCompatActivity {
                     setContentView(R.layout.step_container);
                     FragmentManager fragmentManager = getSupportFragmentManager();
 
-
-
-                    if((!StepFragment.isTablet(getApplicationContext()))  && isLandscape()){
+                    if((!isTablet(getApplicationContext()))  && isLandscape()){
                         StepFragment stepFragment = new StepFragment();
                         fragmentManager.beginTransaction()
                                 .add(R.id.stepContainer, stepFragment)
@@ -96,6 +94,8 @@ public class StepContainerActivity extends AppCompatActivity {
             }
 
     }
+
+
     public boolean isLandscape()
     {
 
@@ -105,7 +105,7 @@ public class StepContainerActivity extends AppCompatActivity {
         return false;
     }
 
-    static boolean isTablet(Context context)
+    public boolean isTablet(Context context)
     {
         boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
         boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);

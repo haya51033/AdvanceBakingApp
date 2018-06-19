@@ -29,7 +29,6 @@
         <activity android:name=".Activity.RecipeFragment" />
         <activity
             android:name=".Activity.StepContainerActivity"
-            android:configChanges="orientation|screenSize|layoutDirection"
             android:launchMode="singleTop" />
 
         <receiver android:name=".Widget.BakingAppWidgetProvider">
