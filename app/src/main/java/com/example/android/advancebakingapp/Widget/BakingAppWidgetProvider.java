@@ -45,7 +45,6 @@ public class BakingAppWidgetProvider extends AppWidgetProvider
             ingredients1.addAll(parcelables);
         }
         else {
-            Toast.makeText(context,"nuuuuuuuul",Toast.LENGTH_LONG).show();
         }
 
         intent.setAction(WIDGET_UPDATE_ACTION);

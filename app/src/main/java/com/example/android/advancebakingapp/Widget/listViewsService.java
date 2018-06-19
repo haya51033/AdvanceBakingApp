@@ -2,10 +2,8 @@ package com.example.android.advancebakingapp.Widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import android.widget.Toast;
 
 import com.example.android.advancebakingapp.Model.Ingredient;
 import com.example.android.advancebakingapp.R;
@@ -47,10 +45,7 @@ class ListViewsFactory implements RemoteViewsService.RemoteViewsFactory
     @Override
     public void onDataSetChanged()
     {
-
         mIngredients = BakingAppWidgetProvider.mIngredients;
-      //  mIngredients = BakingAppWidgetProvider.mIngredients;
-
     }
 
     @Override

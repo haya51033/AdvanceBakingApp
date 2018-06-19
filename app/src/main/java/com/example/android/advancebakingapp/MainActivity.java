@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     private ArrayList<Recipe> mRecipes;
     public RecyclerView rvRecipe;
-   // public GridLayoutManager mGridLayoutManager;
     public LinearLayoutManager mLinearLayoutManager;
     public ArrayList<Recipe> arrayList;
     public RecipeAdapter recipeAdapter;

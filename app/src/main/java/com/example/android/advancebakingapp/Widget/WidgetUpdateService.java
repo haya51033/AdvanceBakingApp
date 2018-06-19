@@ -5,13 +5,9 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.widget.Toast;
 
-import com.example.android.advancebakingapp.MainActivity;
+
 import com.example.android.advancebakingapp.Model.Ingredient;
-import com.example.android.advancebakingapp.Model.Step;
 
 import java.util.ArrayList;
 

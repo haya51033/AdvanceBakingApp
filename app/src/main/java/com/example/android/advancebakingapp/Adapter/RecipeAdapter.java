@@ -37,7 +37,6 @@ public class RecipeAdapter extends
     public void setRecipesData(ArrayList<Recipe> recipeData) {
         mRecipes = recipeData;
         notifyItemRangeChanged(0, mRecipes.size());
-       // notifyDataSetChanged();
     }
 
 

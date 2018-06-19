@@ -18,9 +18,7 @@ public class StepAdapter extends
         RecyclerView.Adapter<StepAdapter.StepAdapterViewHolder> {
     private Context context;
     private ArrayList<Step> mSteps;
-  //  private StepAdapter.StepOnClickHandler mStepOnClickHandler;
     private StepOnClickHandler mStepOnClickHandler;
-
 
     public StepAdapter(StepOnClickHandler stepOnClickHandler) {
         mStepOnClickHandler = stepOnClickHandler;
@@ -49,7 +47,6 @@ public class StepAdapter extends
     @Override
     public void onBindViewHolder(StepAdapter.StepAdapterViewHolder viewHolder, int position) {
         Step step = mSteps.get(position);
-         //Button button = viewHolder.mButton;
         TextView button = viewHolder.mButton;
         button.setText(step.getShortDescription());
     }
@@ -73,7 +70,6 @@ public class StepAdapter extends
           public StepAdapterViewHolder(View view) {
             super(view);
 
-              // mButton = (Button) view.findViewById(R.id.step_button);
               mButton = (TextView) view.findViewById(R.id.step_button);
             view.setOnClickListener(this);
         }
@@ -86,13 +82,9 @@ public class StepAdapter extends
             Step selectedStep = mSteps.get(position);
             mStepOnClickHandler.onClickStep(selectedStep);
         }
-
     }
 
     public interface StepOnClickHandler {
         void onClickStep(Step step);
     }
-
-
-
 }

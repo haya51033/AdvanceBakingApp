@@ -46,8 +46,6 @@ public class IngredientAdapter extends
     @Override
     public void onBindViewHolder(IngredientAdapter.IngredientAdapterViewHolder viewHolder, int position) {
         Ingredient ingredient  = mIngredients.get(position);
-       // Button button = viewHolder.mButton;
-        //button.setText(ingredient.getIngredient());
     }
 
 
@@ -69,7 +67,6 @@ public class IngredientAdapter extends
         public IngredientAdapterViewHolder(View view) {
             super(view);
 
-         //   mButton = (Button) view.findViewById(R.id.ingredient_button);
             view.setOnClickListener(this);
         }
 
@@ -87,7 +84,4 @@ public class IngredientAdapter extends
     public interface IngredientOnClickHandler {
         void onClickRecipe(Ingredient ingredient);
     }
-
-
-
 }
