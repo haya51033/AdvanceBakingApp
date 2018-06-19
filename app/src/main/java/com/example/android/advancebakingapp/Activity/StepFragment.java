@@ -146,6 +146,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         }
 
 
+
         enterFullScreen();
 
         Intent intent = getActivity().getIntent();
