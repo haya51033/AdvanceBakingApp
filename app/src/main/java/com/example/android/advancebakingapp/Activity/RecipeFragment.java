@@ -14,7 +14,7 @@ public class RecipeFragment extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
-
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if(findViewById(R.id.details_linear_layout) != null) {
             mTwoPane = true;
 
@@ -61,9 +61,8 @@ public class RecipeFragment extends AppCompatActivity {
             fragmentManager.beginTransaction()
                     .add(R.id.stepContainer2, stepDescriptionFragment)
                     .commit();
-            String ss;
-
-
         }
     }
+
+
 }

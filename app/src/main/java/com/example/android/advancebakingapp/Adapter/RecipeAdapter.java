@@ -62,7 +62,7 @@ public class RecipeAdapter extends
 
         tv.setText(recipe.getName());
 
-        if (imageUrl.equals("") && imageUrl.isEmpty())
+        if (imageUrl.isEmpty())
         {
             Picasso.with(context).load(R.drawable.baking_app_ico).into(viewHolder.mImageView);
         }

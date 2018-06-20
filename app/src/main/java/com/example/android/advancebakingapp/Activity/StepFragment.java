@@ -112,7 +112,9 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putLong(SELECTED_POSITION,pausePosition);
 
-        playWhenReady = mExoPlayer.getPlayWhenReady();
+        if(mExoPlayer != null){
+            playWhenReady = mExoPlayer.getPlayWhenReady();
+        }
         savedInstanceState.putBoolean(SELECTED_STATE, playWhenReady);
 
         super.onSaveInstanceState(savedInstanceState);
@@ -184,6 +186,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
                     noVideoImageView.setVisibility(View.VISIBLE);
                     mPlayerView.setVisibility(View.GONE);
                     Picasso.with(getContext()).load(R.drawable.baking_app_ico).into(noVideoImageView);
+                    playWhenReady =true;
                 }
             }
 
@@ -236,9 +239,10 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
     @Override
     public void onPause() {
-        if (mExoPlayer != null)
+        if (mExoPlayer != null){
             pausePosition = mExoPlayer.getCurrentPosition();
             playWhenReady = mExoPlayer.getPlayWhenReady();
+        }
 
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         super.onPause();
@@ -326,7 +330,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
                 mExoPlayer.prepare(mediaSource);
                 mExoPlayer.setPlayWhenReady(playWhenReady);
-               // playWhenReady = true;
+                playWhenReady = true;
 
             }
             else {

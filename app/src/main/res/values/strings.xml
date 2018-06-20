@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AdvanceBakingApp</string>
+    <string name="app_name">BakingApp</string>
     <string name="ingredient">Ingredient</string>
     <string name="steps">Steps</string>
     <string name="play">Play</string>
@@ -13,16 +13,8 @@
     <string name="add_widget">Add widget</string>
     <string name="noRecipe">No Recipe</string>
     <string name="item_element_text">Brownies</string>
-    <string name="items_test">- Bittersweet chocolate (60-70% cacao) (350.0 G)
-- unsalted butter (226.0 G)
-- granulated sugar (300.0 G)
-- light brown sugar (100.0 G)
-- large eggs (5.0 UNIT)
-- vanilla extract (1.0 TBLSP)
-- all purpose flour (140.0 G)
-- cocoa powder (40.0 G)
-- salt (1.5 TSP)
-- semisweet chocolate chips (350.0 G)</string>
+    <string name="recipe_details_title_bar">Recipe Details</string>
+    <string name="recipe_step_title_bar">Recipe Details</string>
 
 
 </resources>
