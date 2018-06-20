@@ -1,7 +1,9 @@
 package com.example.android.advancebakingapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
@@ -24,6 +26,7 @@ import com.example.android.advancebakingapp.Model.Recipe;
 import com.example.android.advancebakingapp.Model.Step;
 import com.example.android.advancebakingapp.Widget.BakingAppWidgetProvider;
 import com.example.android.advancebakingapp.Widget.WidgetUpdateService;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,12 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
     public static final String BUNDLE = "bundle";
     public static final String INGREDIENTS = "ingredients";
     private Recipe[] mRecipesArr;
+    public static final String SHARED_PREFS_KEY = "SHARED_PREFS_KEY";
+    Gson gson;
+    String json;
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
+
 
 
     // The Idling Resource which will be null in production.
@@ -171,11 +180,14 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         steps.addAll(arr.get(0).getSteps());
 
 
+
         Intent intent1 = new Intent(getApplicationContext(), BakingAppWidgetProvider.class);
         Bundle args1 = new Bundle();
         args1.putSerializable("INGREDIENTS",ingredients);
         intent1.putExtra("BUNDLE", args1);
         this.sendBroadcast(intent1);
+
+        SharedPrefListner(ingredients);
 
         Intent intent = new Intent(getApplicationContext(), RecipeFragment.class);
         Bundle args = new Bundle();
@@ -185,5 +197,18 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         startActivity(intent);
 
     }
+
+    public void SharedPrefListner(ArrayList<Ingredient> ingredients){
+        gson = new Gson();
+        json = gson.toJson(ingredients);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        editor = prefs.edit();
+        editor.putString(SHARED_PREFS_KEY, json).commit();
+
+
+    }
+
+
 
 }

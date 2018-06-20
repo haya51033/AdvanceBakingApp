@@ -84,6 +84,7 @@ public class BakingAppWidgetProvider extends AppWidgetProvider
             ComponentName component = new ComponentName(context, BakingAppWidgetProvider.class);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.list_view_widget);
             appWidgetManager.updateAppWidget(component, views);
+
         }
     }
 
