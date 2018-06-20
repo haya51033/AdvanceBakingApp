@@ -59,6 +59,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     Step step;
     ImageView noVideoImageView;
     String SELECTED_POSITION;
+    String SELECTED_STATE;
     int stepIndex;
     ArrayList<Step> saveSteps = new ArrayList<>();
     public long position = -1;
@@ -73,7 +74,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     View rootView;
     String returnedScreen;
     FrameLayout frameLayout;
-
+     public static boolean playWhenReady = true;
     @Override
     public void onStop()
     {
@@ -89,6 +90,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     {
         super.onResume();
         pausePosition = -1;
+        playWhenReady = true;
 
     }
 
@@ -98,6 +100,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if (mExoPlayer != null)
         {
             position = mExoPlayer.getCurrentPosition();
+
+
         }
         super.onDestroyView();
     }
@@ -107,6 +111,10 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putLong(SELECTED_POSITION,pausePosition);
+
+        playWhenReady = mExoPlayer.getPlayWhenReady();
+        savedInstanceState.putBoolean(SELECTED_STATE, playWhenReady);
+
         super.onSaveInstanceState(savedInstanceState);
 
     }
@@ -122,6 +130,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         super.onCreate(savedInstanceState);
         if(savedInstanceState!=null) {
             super.onActivityCreated(savedInstanceState);
+
         }
     }
 
@@ -137,15 +146,16 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                 (getResources(), R.drawable.ic_launcher_background));
 
-        if(savedInstanceState!=null) {
-            super.onActivityCreated(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            boolean testState = savedInstanceState.getBoolean(SELECTED_STATE);
+                playWhenReady =testState;
+
             long testPosition =savedInstanceState.getLong(SELECTED_POSITION);
             if(testPosition >=0){
                 pausePosition = testPosition;
             }
         }
-
-
 
         enterFullScreen();
 
@@ -202,7 +212,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
     public boolean enterFullScreen(){
         if(isLandscape() && !isTablet(getContext())){
-            Toast.makeText(getActivity(),"enter full screen  " , Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(),"Full Screen Mode." , Toast.LENGTH_SHORT).show();
             frameLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -228,6 +238,8 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
     public void onPause() {
         if (mExoPlayer != null)
             pausePosition = mExoPlayer.getCurrentPosition();
+            playWhenReady = mExoPlayer.getPlayWhenReady();
+
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         super.onPause();
         if (Util.SDK_INT <= 23)
@@ -313,7 +325,9 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
 
 
                 mExoPlayer.prepare(mediaSource);
-                mExoPlayer.setPlayWhenReady(true);
+                mExoPlayer.setPlayWhenReady(playWhenReady);
+               // playWhenReady = true;
+
             }
             else {
             }
@@ -364,6 +378,7 @@ public class StepFragment extends Fragment implements View.OnClickListener, ExoP
         if (mExoPlayer != null)
         {
             mNotificationManager.cancelAll();
+           // playWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.stop();
             mExoPlayer.release();
         }
